@@ -2,55 +2,54 @@
  * Task 2
  */
 
-const fs = require("fs");
-const path = require("path");
-const util = require("util");
-const { validationErrorMessages } = require("./constants");
+const fs = require('fs');
+const path = require('path');
+const { validationErrorMessages } = require('./constants');
+
+/**
+ * Get all products from data paths
+ * @param {Array} dataPaths - Array of file paths
+ */
+function getAllProducts(dataPath) {
+    const productsData = fs.readFileSync(dataPath, 'utf-8');
+    return JSON.parse(productsData).products;
+}
 
 /**
  * Update expiry date of the item
  * @param {Number} itemId - Item id
  * @param {String} expiryDate - Expiry date in ISO8601 format
  */
-async function updateExpiryDateByItemId(itemId, expiryDate, filePath) {
-  const validatedItemId = Number(itemId);
-
-  if (itemId === null || isNaN(validatedItemId) || !Number.isInteger(itemId)) {
-    throw new Error(validationErrorMessages.itemIdValidtion);
-  }
-
-  const validDatedExpiryDate = new Date(expiryDate);
-
-  if (expiryDate === null || isNaN(validDatedExpiryDate.getTime())) {
-    throw new Error(validationErrorMessages.expiryDateValidation);
-  }
-
-  const readFileAsync = util.promisify(fs.readFile);
-
-  const data = await readFileAsync(filePath, "utf8");
-  let item = {};
-
-  const productList = data ? JSON.parse(data) : undefined;
-
-  let itemFound = false;
-  let productFound = {};
-
-  for (let productIndex = 0; productIndex < products.length; productIndex++) {
-    let product = products[productIndex];
-    item = product?.items.findIndex(
-      (element) => element.item_id === validatedItemId
-    );
-    if (item !== -1) {
-      itemFound = true;
-      productList.products[productIndex].items[item].expiry_date = expiryDate;
-      productFound = productList.products[productIndex];
-      productFound.items = productList.products[productIndex].items[item];
-      break;
+async function updateExpiryDateByItemId(itemId, expiryDate, dataPaths) {
+    if (!Number.isInteger(itemId) || itemId <= 0) {
+        throw new Error(validationErrorMessages.itemIdValidation);
     }
-  }
 
-  return productFound;
+    const products = getAllProducts(dataPaths);
+    let productFound;
+
+    for (const product of products) {
+        const item = product.items.find((item) => item.item_id === itemId);
+
+        if (item) {
+            item.expiry_date = expiryDate;
+            productFound = product;
+            break;
+        }
+    }
+
+    if (!productFound) {
+        throw new Error(validationErrorMessages.itemNotFound);
+    }
+
+    productFound.items = productFound.items.filter(item => item.item_id === itemId);
+
+    return productFound;
 }
+
+module.exports = {
+    updateExpiryDateByItemId,
+};
 
 /**
  * TIP: Use the following code to test your implementation.

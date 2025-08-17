@@ -1,7 +1,10 @@
 const { addItem } = require("../src/task3");
 const { validationErrorMessages } = require("../src/constants");
+const path = require('path');
 
 jest.restoreAllMocks();
+
+const filePath = path.resolve(__dirname, "../src/data/task3/products.json");
 
 // Test the function that uses fs.readFile
 describe("Task 3: addItem", () => {
@@ -9,22 +12,22 @@ describe("Task 3: addItem", () => {
   // product exist or not
   test("should throw error if product does not exist", async () => {
     const item = { id: 101, expiry_date: "2060-05-15T10:57:07.846Z" };
-    await expect(addItem(1000, item)).rejects.toThrow(
+    await expect(addItem(1000, item, filePath)).rejects.toThrow(
       validationErrorMessages.productNotFound
     );
   });
 
   // validate item criteria
-  test("should return throw error when adding a new item with an already existing item id", async () => {
+    test("should return throw error when adding a new item with an already existing item id", async () => {
     const item = { id: 101, expiry_date: "2060-05-15T10:57:07.846Z" };
-    await expect(addItem(1, item)).rejects.toThrow(
+    await expect(addItem(1, item, filePath)).rejects.toThrow(
       validationErrorMessages.itemAlreadyExists
     );
   });
 
-  test("should return throw error when adding a new item with an expired date", async () => {
+    test("should return throw error when adding a new item with an expired date", async () => {
     const item = { id: 107, expiry_date: "2005-01-17T10:42:56.976Z" };
-    await expect(addItem(1, item)).rejects.toThrow(
+    await expect(addItem(1, item, filePath)).rejects.toThrow(
       validationErrorMessages.itemExpired
     );
   });
@@ -69,7 +72,7 @@ describe("Task 3: addItem", () => {
       ],
     };
 
-    const result = await addItem(1, item);
+    const result = await addItem(1, item, filePath);
     expect(result).toMatchObject(expectedProductObject);
   });
 });

@@ -19,21 +19,24 @@ describe("Task 1: getProductInformation", () => {
     result = await getProductInformationByProductId(1, dataPaths);
   });
 
-  test("should include images in the review object for product id 1", () => {
-    expect(result.reviews[0].images[0].id).toBe(2);
-    expect(result.reviews[0].images[0].url).toBe(
+    test("should include images in the review object for product id 1", () => {
+    const review = result.reviews.find(r => r.id === 2);
+    expect(review.images[0].id).toBe(2);
+    expect(review.images[0].url).toBe(
       "https://farm4.staticflickr.com/3752/9684880330_9b4698f7cb_z_d.jpg"
     );
   });
 
   test("should exclude credit card numbers for product id 1", () => {
-    expect(result.reviews[0].customer.credit_card).not.toBeDefined();
+        const review = result.reviews.find(r => r.id === 2);
+    expect(review.customer.credit_card).not.toBeDefined();
   });
 
-  test("should include formatted customer object in the review object for product id 1", async () => {
-    expect(result.reviews[0].customer.id).toBe(2);
-    expect(result.reviews[0].customer.name).toBe("Hemanth");
-    expect(result.reviews[0].customer.email).toBe("hemanth.p@gmail.com");
-    expect(result.reviews[0].customer.phone_number).toBe("NDA1Njc3NDAyMw==");
+    test("should include formatted customer object in the review object for product id 1", async () => {
+    const review = result.reviews.find(r => r.id === 2);
+    expect(review.customer.id).toBe(2);
+    expect(review.customer.name).toBe("Hemanth");
+    expect(review.customer.email).toBe("hemanth.p@gmail.com");
+    expect(review.customer.phone_number).toBe("NDA1Njc3NDAyMw==");
   });
 });

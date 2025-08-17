@@ -2,7 +2,7 @@ const { updateExpiryDateByItemId } = require("../src/task2");
 const { validationErrorMessages } = require("../src/constants");
 const path = require('path');
 
-const filePath = path.resolve(__dirname, "../src/data/task2/update_item_products_hidden.json");
+const filePath = path.resolve(__dirname, "../src/data/task2/update_item_products.json");
 
 describe("Task 2: updateExpiryDateByItemId", () => {
   test("should not throw compile time error", async () => {
